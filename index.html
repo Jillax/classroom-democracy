@@ -789,13 +789,28 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.q
 
 // ── STUDENT SELECTS ──
 function populateStudentSelects() {
-  ['propAuthor', 'discAuthor', 'commentAuthor', 'councilStudent'].forEach(id => {
-    const sel = document.getElementById(id);
+  // Build list: teacher first (if registered), then students
+  var people = [];
+  if (DATA.config.teacherName) {
+    people.push('<option value="' + DATA.config.teacherName + '">' + DATA.config.teacherName + '（' + (DATA.config.teacherRole || '教师') + '）</option>');
+  }
+  people = people.concat(DATA.students.map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }));
+
+  ['propAuthor', 'discAuthor', 'commentAuthor'].forEach(function(id) {
+    var sel = document.getElementById(id);
     if (!sel) return;
-    const val = sel.value;
-    sel.innerHTML = '<option value="">选择学生</option>' + DATA.students.map(s => '<option value="' + s + '">' + s + '</option>').join('');
+    var val = sel.value;
+    sel.innerHTML = '<option value="">选择发起人</option>' + people.join('');
     sel.value = val;
   });
+
+  // Council student select: students only (teacher doesn't run for council)
+  var councilSel = document.getElementById('councilStudent');
+  if (councilSel) {
+    var val2 = councilSel.value;
+    councilSel.innerHTML = '<option value="">选择学生</option>' + DATA.students.map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
+    councilSel.value = val2;
+  }
 }
 
 // ── PROPOSALS ──
