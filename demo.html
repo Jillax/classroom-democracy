@@ -1,0 +1,4154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新公民广场 — 课堂民主实践平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES & RESET
+   ═══════════════════════════════════════════ */
+:root {
+  /* Primary Palette — Civic Teal & Amber */
+  --teal-900: #0a2626;
+  --teal-800: #0f3535;
+  --teal-700: #143f3f;
+  --teal-600: #1a5454;
+  --teal-500: #1f6b6b;
+  --teal-400: #2a8f8f;
+  --teal-300: #4db8b8;
+  --teal-200: #8fd4d4;
+  --teal-100: #c8ecec;
+  --teal-50: #e8f7f7;
+
+  --amber-600: #9a7b2e;
+  --amber-500: #c8a45c;
+  --amber-400: #d4b46c;
+  --amber-300: #e0c88c;
+  --amber-200: #eadab8;
+  --amber-100: #f5ecd4;
+  --amber-50: #faf6ec;
+
+  --cream: #f8f4ec;
+  --cream-warm: #f5f0e4;
+  --paper: #faf8f2;
+  --ink: #1a1814;
+  --ink-light: #3a3630;
+  --ink-muted: #6a645a;
+  --ink-faint: #9a9488;
+
+  --red-500: #c23a3a;
+  --red-100: #fce8e8;
+  --green-500: #2a8a4a;
+  --green-100: #e8f5ec;
+  --blue-500: #2a5a9a;
+  --blue-100: #e8eef5;
+
+  /* Typography */
+  --font-display: 'Playfair Display', 'Noto Serif SC', 'SimSun', serif;
+  --font-serif: 'Noto Serif SC', 'SimSun', 'STSong', serif;
+  --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(10,38,38,0.06), 0 1px 2px rgba(10,38,38,0.04);
+  --shadow-md: 0 4px 12px rgba(10,38,38,0.08), 0 2px 4px rgba(10,38,38,0.04);
+  --shadow-lg: 0 12px 36px rgba(10,38,38,0.12), 0 4px 12px rgba(10,38,38,0.06);
+  --shadow-xl: 0 24px 64px rgba(10,38,38,0.16), 0 8px 24px rgba(10,38,38,0.08);
+  --shadow-glow: 0 0 40px rgba(26,84,84,0.15);
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --header-height: 72px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--cream-warm); }
+::-webkit-scrollbar-thumb { background: var(--teal-300); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--teal-400); }
+
+::selection { background: var(--amber-200); color: var(--teal-900); }
+
+/* ═══════════════════════════════════════════
+   LAYOUT — SIDEBAR + MAIN
+   ═══════════════════════════════════════════ */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--teal-900);
+  color: var(--teal-100);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s var(--ease-out);
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(77,184,184,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(200,164,92,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.sidebar-header {
+  padding: var(--space-xl) var(--space-lg);
+  border-bottom: 1px solid rgba(143,212,212,0.1);
+  position: relative;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--amber-500), var(--amber-400));
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(200,164,92,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-icon::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: calc(var(--radius-md) - 2px);
+}
+
+.brand-text h1 {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.brand-text p {
+  font-size: 11px;
+  color: var(--teal-300);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: var(--space-lg) var(--space-md);
+  overflow-y: auto;
+}
+
+.nav-section {
+  margin-bottom: var(--space-lg);
+}
+
+.nav-section-title {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal-400);
+  padding: 0 var(--space-md);
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 11px var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  font-size: 14px;
+  color: var(--teal-200);
+  margin-bottom: 2px;
+  user-select: none;
+}
+
+.nav-item:hover {
+  background: rgba(143,212,212,0.08);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: rgba(143,212,212,0.12);
+  color: #fff;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background: var(--amber-500);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-item .icon {
+  width: 20px;
+  text-align: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--red-500);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid rgba(143,212,212,0.1);
+  position: relative;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.user-card:hover { background: rgba(143,212,212,0.08); }
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal-400), var(--teal-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  border: 2px solid var(--amber-500);
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 11px;
+  color: var(--teal-300);
+}
+
+/* ─── MAIN CONTENT ─── */
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+}
+
+/* ─── HEADER ─── */
+.main-header {
+  height: var(--header-height);
+  background: rgba(248,244,236,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(26,22,20,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-2xl);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.header-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.header-breadcrumb .sep {
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+
+.header-breadcrumb .current {
+  color: var(--ink);
+  font-weight: 600;
+  font-family: var(--font-serif);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.header-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(26,22,20,0.08);
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 18px;
+  color: var(--ink-muted);
+  position: relative;
+}
+
+.header-btn:hover {
+  border-color: var(--teal-300);
+  color: var(--teal-600);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-btn .badge-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--red-500);
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--paper);
+  border: 1px solid rgba(26,22,20,0.08);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  min-width: 220px;
+  transition: all 0.2s;
+}
+
+.search-box:focus-within {
+  border-color: var(--teal-400);
+  box-shadow: 0 0 0 3px rgba(42,143,143,0.1);
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink);
+  width: 100%;
+}
+
+.search-box input::placeholder { color: var(--ink-faint); }
+.search-box .search-icon { color: var(--ink-faint); font-size: 14px; }
+
+/* ─── PAGE CONTENT ─── */
+.page-content {
+  padding: var(--space-2xl);
+  max-width: 1400px;
+  animation: fadeInUp 0.6s var(--ease-out);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════ */
+.page { display: none; }
+.page.active { display: block; animation: fadeInUp 0.5s var(--ease-out); }
+
+.dashboard-hero {
+  background: linear-gradient(135deg, var(--teal-800), var(--teal-700));
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl) var(--space-3xl);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-xl);
+}
+
+.dashboard-hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(200,164,92,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.dashboard-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--amber-500), var(--amber-400), var(--amber-500));
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-greeting {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--amber-300);
+  letter-spacing: 2px;
+  margin-bottom: var(--space-sm);
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: var(--space-md);
+}
+
+.hero-subtitle {
+  font-size: 15px;
+  color: var(--teal-200);
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.hero-quote {
+  position: absolute;
+  right: var(--space-3xl);
+  bottom: var(--space-2xl);
+  text-align: right;
+  max-width: 300px;
+  z-index: 1;
+}
+
+.hero-quote blockquote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--teal-200);
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.hero-quote cite {
+  display: block;
+  margin-top: var(--space-sm);
+  font-size: 12px;
+  color: var(--amber-400);
+  font-style: normal;
+  letter-spacing: 1px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.stat-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-xl);
+  border: 1px solid rgba(26,22,20,0.05);
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--teal-400);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card:hover::before { transform: scaleX(1); }
+
+.stat-card:nth-child(1)::before { background: var(--teal-400); }
+.stat-card:nth-child(2)::before { background: var(--amber-500); }
+.stat-card:nth-child(3)::before { background: var(--green-500); }
+.stat-card:nth-child(4)::before { background: var(--blue-500); }
+
+.stat-icon {
+  font-size: 28px;
+  margin-bottom: var(--space-md);
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: var(--space-xs);
+}
+
+.stat-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: var(--space-sm);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.stat-trend.up { background: var(--green-100); color: var(--green-500); }
+.stat-trend.down { background: var(--red-100); color: var(--red-500); }
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-xl);
+}
+
+.card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+}
+
+.card:hover { box-shadow: var(--shadow-sm); }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid rgba(26,22,20,0.05);
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.card-title .icon { font-size: 18px; }
+
+.card-action {
+  font-size: 13px;
+  color: var(--teal-500);
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+}
+
+.card-action:hover { color: var(--teal-600); }
+
+.card-body { padding: var(--space-lg) var(--space-xl); }
+
+/* Recent Proposals */
+.proposal-item {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid rgba(26,22,20,0.04);
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0 calc(-1 * var(--space-xl));
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+}
+
+.proposal-item:last-child { border-bottom: none; }
+.proposal-item:hover { background: rgba(26,84,84,0.02); }
+
+.proposal-status {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.proposal-status.voting { background: var(--amber-100); }
+.proposal-status.passed { background: var(--green-100); }
+.proposal-status.discussing { background: var(--blue-100); }
+.proposal-status.draft { background: rgba(26,22,20,0.05); }
+
+.proposal-info { flex: 1; min-width: 0; }
+
+.proposal-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.proposal-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.proposal-tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tag-life { background: var(--amber-100); color: var(--amber-600); }
+.tag-study { background: var(--blue-100); color: var(--blue-500); }
+.tag-environment { background: var(--green-100); color: var(--green-500); }
+.tag-activity { background: var(--red-100); color: var(--red-500); }
+.tag-rule { background: rgba(26,22,20,0.06); color: var(--ink-muted); }
+
+/* Activity Timeline */
+.timeline {
+  position: relative;
+  padding-left: var(--space-xl);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--teal-200), transparent);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--space-lg);
+  padding-left: var(--space-md);
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-dot {
+  position: absolute;
+  left: -20px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--teal-400);
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 2px var(--teal-200);
+}
+
+.timeline-dot.amber { background: var(--amber-500); box-shadow: 0 0 0 2px var(--amber-200); }
+.timeline-dot.green { background: var(--green-500); box-shadow: 0 0 0 2px var(--green-100); }
+
+.timeline-content {
+  font-size: 13px;
+  color: var(--ink-light);
+  line-height: 1.5;
+}
+
+.timeline-time {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.quick-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  background: var(--cream-warm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+  border: 1px solid transparent;
+  text-align: center;
+}
+
+.quick-action:hover {
+  background: var(--paper);
+  border-color: var(--teal-200);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-action .icon { font-size: 24px; }
+.quick-action .label { font-size: 13px; font-weight: 600; color: var(--ink-light); }
+.quick-action .desc { font-size: 11px; color: var(--ink-muted); }
+
+/* ═══════════════════════════════════════════
+   PROPOSALS PAGE
+   ═══════════════════════════════════════════ */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+}
+
+.page-header h2 {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.page-header-desc {
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--teal-600);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--teal-500);
+  box-shadow: 0 4px 12px rgba(26,84,84,0.3);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--paper);
+  color: var(--ink-light);
+  border: 1px solid rgba(26,22,20,0.1);
+}
+
+.btn-secondary:hover {
+  border-color: var(--teal-300);
+  color: var(--teal-600);
+}
+
+.btn-amber {
+  background: linear-gradient(135deg, var(--amber-500), var(--amber-400));
+  color: var(--teal-900);
+}
+
+.btn-amber:hover {
+  box-shadow: 0 4px 12px rgba(200,164,92,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.btn-lg { padding: 14px 28px; font-size: 16px; }
+
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.filter-tabs {
+  display: flex;
+  background: var(--paper);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(26,22,20,0.06);
+  overflow: hidden;
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  position: relative;
+}
+
+.filter-tab:hover { color: var(--ink); background: rgba(26,84,84,0.03); }
+
+.filter-tab.active {
+  color: var(--teal-700);
+  background: var(--teal-50);
+  font-weight: 600;
+}
+
+.filter-chips {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid rgba(26,22,20,0.08);
+  background: var(--paper);
+  color: var(--ink-muted);
+}
+
+.chip:hover { border-color: var(--teal-300); color: var(--teal-600); }
+.chip.active { background: var(--teal-600); color: #fff; border-color: var(--teal-600); }
+
+/* Proposal Cards */
+.proposals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--space-lg);
+}
+
+.proposal-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  padding: var(--space-xl);
+  transition: all 0.3s var(--ease-out);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.proposal-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--teal-200);
+}
+
+.proposal-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.proposal-number {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  background: rgba(26,22,20,0.04);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.proposal-card-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+.status-voting { background: var(--amber-100); color: var(--amber-600); }
+.status-passed { background: var(--green-100); color: var(--green-500); }
+.status-discussing { background: var(--blue-100); color: var(--blue-500); }
+.status-draft { background: rgba(26,22,20,0.06); color: var(--ink-muted); }
+.status-rejected { background: var(--red-100); color: var(--red-500); }
+
+.proposal-card-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.5;
+  margin-bottom: var(--space-md);
+}
+
+.proposal-card-desc {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.proposal-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(26,22,20,0.04);
+}
+
+.proposal-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.proposal-author-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--teal-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal-700);
+}
+
+.proposal-author-name {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.proposal-stats {
+  display: flex;
+  gap: var(--space-md);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.proposal-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Vote Progress */
+.vote-progress {
+  margin-top: var(--space-md);
+}
+
+.vote-bar {
+  height: 6px;
+  background: rgba(26,22,20,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+
+.vote-bar-for {
+  background: var(--green-500);
+  height: 100%;
+  transition: width 1s var(--ease-out);
+}
+
+.vote-bar-against {
+  background: var(--red-500);
+  height: 100%;
+  transition: width 1s var(--ease-out);
+}
+
+.vote-bar-abstain {
+  background: var(--ink-faint);
+  height: 100%;
+  transition: width 1s var(--ease-out);
+}
+
+.vote-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* ═══════════════════════════════════════════
+   VOTING CENTER
+   ═══════════════════════════════════════════ */
+.voting-card {
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(26,22,20,0.05);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.voting-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal-400), var(--amber-500));
+}
+
+.voting-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+}
+
+.voting-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1.4;
+  max-width: 70%;
+}
+
+.voting-timer {
+  text-align: right;
+}
+
+.voting-timer-label {
+  font-size: 11px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.voting-timer-value {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--teal-600);
+  background: var(--teal-50);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.voting-desc {
+  font-size: 14px;
+  color: var(--ink-muted);
+  line-height: 1.8;
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  border-bottom: 1px solid rgba(26,22,20,0.06);
+}
+
+.vote-options {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.vote-option {
+  flex: 1;
+  padding: var(--space-xl);
+  background: var(--cream-warm);
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.vote-option:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.vote-option.selected {
+  border-color: var(--teal-400);
+  background: var(--teal-50);
+}
+
+.vote-option.for:hover { border-color: var(--green-500); background: var(--green-100); }
+.vote-option.for.selected { border-color: var(--green-500); background: var(--green-100); }
+.vote-option.against:hover { border-color: var(--red-500); background: var(--red-100); }
+.vote-option.against.selected { border-color: var(--red-500); background: var(--red-100); }
+.vote-option.abstain:hover { border-color: var(--ink-faint); background: rgba(26,22,20,0.04); }
+.vote-option.abstain.selected { border-color: var(--ink-faint); background: rgba(26,22,20,0.04); }
+
+.vote-option-icon {
+  font-size: 36px;
+  margin-bottom: var(--space-md);
+  transition: transform 0.3s var(--ease-spring);
+}
+
+.vote-option:hover .vote-option-icon { transform: scale(1.1); }
+.vote-option.selected .vote-option-icon { transform: scale(1.15); }
+
+.vote-option-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.vote-option-count {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--teal-600);
+}
+
+.vote-option-pct {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+/* Voting result bars */
+.result-bar-container {
+  margin-top: var(--space-md);
+  height: 8px;
+  background: rgba(26,22,20,0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.result-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1.5s var(--ease-out);
+}
+
+.result-bar.for { background: linear-gradient(90deg, var(--green-500), #3aaa5a); }
+.result-bar.against { background: linear-gradient(90deg, var(--red-500), #d44a4a); }
+.result-bar.abstain { background: linear-gradient(90deg, var(--ink-faint), #b0a898); }
+
+.vote-submit-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vote-warning {
+  font-size: 13px;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ═══════════════════════════════════════════
+   COUNCIL PAGE
+   ═══════════════════════════════════════════ */
+.council-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+.council-member {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  padding: var(--space-xl);
+  text-align: center;
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.council-member:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.council-member::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--amber-500);
+}
+
+.council-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin: 0 auto var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  position: relative;
+}
+
+.council-avatar.chair { background: linear-gradient(135deg, var(--amber-500), var(--amber-400)); }
+.council-avatar.vice { background: linear-gradient(135deg, var(--teal-500), var(--teal-400)); }
+.council-avatar.secretary { background: linear-gradient(135deg, var(--blue-500), #4a7aaa); }
+.council-avatar.member { background: linear-gradient(135deg, var(--ink-muted), var(--ink-faint)); }
+
+.council-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid rgba(200,164,92,0.3);
+}
+
+.council-name {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.council-role {
+  font-size: 12px;
+  color: var(--amber-600);
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: var(--space-md);
+}
+
+.council-votes {
+  font-size: 12px;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.council-badge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  font-size: 14px;
+}
+
+/* Meeting Card */
+.meeting-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  display: flex;
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+  transition: all 0.2s;
+}
+
+.meeting-card:hover { box-shadow: var(--shadow-sm); }
+
+.meeting-date {
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--teal-800);
+  color: #fff;
+  flex-shrink: 0;
+  padding: var(--space-md);
+}
+
+.meeting-date .month {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--teal-300);
+}
+
+.meeting-date .day {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.meeting-content {
+  padding: var(--space-md) var(--space-lg);
+  flex: 1;
+}
+
+.meeting-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.meeting-time {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.meeting-agenda {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   CHARTER PAGE
+   ═══════════════════════════════════════════ */
+.charter-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.charter-header {
+  text-align: center;
+  padding: var(--space-3xl) var(--space-2xl);
+  background: linear-gradient(135deg, var(--teal-900), var(--teal-800));
+  border-radius: var(--radius-lg);
+  color: #fff;
+  margin-bottom: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.charter-header::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(200,164,92,0.3);
+  border-radius: calc(var(--radius-lg) - 4px);
+  pointer-events: none;
+}
+
+.charter-header::after {
+  content: '⚖';
+  position: absolute;
+  font-size: 120px;
+  opacity: 0.04;
+  right: 40px;
+  top: -20px;
+}
+
+.charter-emblem {
+  font-size: 48px;
+  margin-bottom: var(--space-md);
+}
+
+.charter-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  margin-bottom: var(--space-sm);
+}
+
+.charter-subtitle {
+  font-size: 14px;
+  color: var(--amber-300);
+  letter-spacing: 2px;
+}
+
+.charter-articles {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  overflow: hidden;
+}
+
+.charter-article {
+  padding: var(--space-xl) var(--space-2xl);
+  border-bottom: 1px solid rgba(26,22,20,0.04);
+  transition: background 0.2s;
+}
+
+.charter-article:last-child { border-bottom: none; }
+.charter-article:hover { background: rgba(26,84,84,0.02); }
+
+.charter-article-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--teal-500);
+  letter-spacing: 2px;
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+}
+
+.charter-article-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: var(--space-md);
+}
+
+.charter-article-text {
+  font-size: 14px;
+  color: var(--ink-light);
+  line-height: 1.9;
+}
+
+.charter-amendment {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px dashed rgba(26,22,20,0.06);
+}
+
+.charter-amendment-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--amber-100);
+  color: var(--amber-600);
+  white-space: nowrap;
+}
+
+.charter-amendment-text {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════
+   STATISTICS PAGE
+   ═══════════════════════════════════════════ */
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.stats-big-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  padding: var(--space-xl);
+  text-align: center;
+}
+
+.stats-big-number {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--teal-600);
+  line-height: 1;
+}
+
+.stats-big-label {
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-top: var(--space-sm);
+}
+
+.chart-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  margin-bottom: var(--space-xl);
+}
+
+.chart-header {
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid rgba(26,22,20,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chart-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.chart-body {
+  padding: var(--space-xl);
+}
+
+/* Bar Chart */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+  height: 200px;
+  padding-top: var(--space-md);
+}
+
+.bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 100%;
+  max-width: 48px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: height 1s var(--ease-out);
+  position: relative;
+  cursor: pointer;
+}
+
+.bar:hover { opacity: 0.8; }
+
+.bar.teal { background: linear-gradient(to top, var(--teal-600), var(--teal-400)); }
+.bar.amber { background: linear-gradient(to top, var(--amber-600), var(--amber-400)); }
+.bar.green { background: linear-gradient(to top, var(--green-500), #3aaa5a); }
+
+.bar-label {
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: var(--space-sm);
+  text-align: center;
+}
+
+.bar-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-light);
+  margin-bottom: 4px;
+}
+
+/* Leaderboard */
+.leaderboard {
+  counter-reset: rank;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+  margin-bottom: 4px;
+}
+
+.leaderboard-item:hover { background: rgba(26,84,84,0.03); }
+
+.leaderboard-rank {
+  counter-increment: rank;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.leaderboard-rank.gold { background: var(--amber-100); color: var(--amber-600); }
+.leaderboard-rank.silver { background: rgba(26,22,20,0.08); color: var(--ink-muted); }
+.leaderboard-rank.bronze { background: #f0e8d8; color: #8a6a3a; }
+.leaderboard-rank.normal { background: rgba(26,22,20,0.04); color: var(--ink-faint); }
+
+.leaderboard-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--teal-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--teal-700);
+  flex-shrink: 0;
+}
+
+.leaderboard-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.leaderboard-score {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal-600);
+}
+
+/* Donut Chart (CSS) */
+.donut-chart {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  position: relative;
+  margin: 0 auto;
+}
+
+.donut-center {
+  position: absolute;
+  inset: 30px;
+  background: var(--paper);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center .value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.donut-center .label {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  justify-content: center;
+  margin-top: var(--space-lg);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* ═══════════════════════════════════════════
+   PROFILE PAGE
+   ═══════════════════════════════════════════ */
+.profile-header-card {
+  background: linear-gradient(135deg, var(--teal-800), var(--teal-700));
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl) var(--space-3xl);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl);
+  margin-bottom: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header-card::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(200,164,92,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.profile-avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber-500), var(--amber-400));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--teal-900);
+  border: 4px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-info { flex: 1; position: relative; z-index: 1; }
+
+.profile-name {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.profile-class {
+  font-size: 14px;
+  color: var(--teal-200);
+  margin-bottom: var(--space-md);
+}
+
+.profile-stats-row {
+  display: flex;
+  gap: var(--space-2xl);
+}
+
+.profile-stat {
+  text-align: center;
+}
+
+.profile-stat-value {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.profile-stat-label {
+  font-size: 12px;
+  color: var(--teal-300);
+}
+
+/* Badges */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-md);
+}
+
+.badge-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  padding: var(--space-lg);
+  text-align: center;
+  transition: all 0.3s var(--ease-out);
+}
+
+.badge-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.badge-card.earned { border-color: var(--amber-300); }
+.badge-card.locked { opacity: 0.5; filter: grayscale(0.5); }
+
+.badge-icon {
+  font-size: 36px;
+  margin-bottom: var(--space-sm);
+}
+
+.badge-name {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.badge-desc {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* Activity History */
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid rgba(26,22,20,0.04);
+}
+
+.history-item:last-child { border-bottom: none; }
+
+.history-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.history-icon.vote { background: var(--teal-100); }
+.history-icon.proposal { background: var(--amber-100); }
+.history-icon.discussion { background: var(--blue-100); }
+.history-icon.badge { background: var(--green-100); }
+
+.history-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ink-light);
+}
+
+.history-time {
+  font-size: 12px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,38,38,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.4s var(--ease-out);
+  box-shadow: var(--shadow-xl);
+}
+
+.modal-overlay.active .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  padding: var(--space-xl) var(--space-2xl);
+  border-bottom: 1px solid rgba(26,22,20,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(26,22,20,0.05);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: var(--ink-muted);
+}
+
+.modal-close:hover { background: rgba(26,22,20,0.1); }
+
+.modal-body {
+  padding: var(--space-2xl);
+}
+
+.modal-footer {
+  padding: var(--space-lg) var(--space-2xl);
+  border-top: 1px solid rgba(26,22,20,0.06);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: var(--space-lg);
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-sm);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(26,22,20,0.12);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper);
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--teal-400);
+  box-shadow: 0 0 0 3px rgba(42,143,143,0.1);
+}
+
+.form-input::placeholder { color: var(--ink-faint); }
+
+textarea.form-input {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+select.form-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236a645a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   TOAST / NOTIFICATIONS
+   ═══════════════════════════════════════════ */
+.toast-container {
+  position: fixed;
+  top: var(--space-xl);
+  right: var(--space-xl);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.toast {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-width: 300px;
+  transform: translateX(120%);
+  transition: transform 0.4s var(--ease-out);
+  border-left: 4px solid var(--teal-400);
+}
+
+.toast.show { transform: translateX(0); }
+.toast.success { border-left-color: var(--green-500); }
+.toast.warning { border-left-color: var(--amber-500); }
+.toast.error { border-left-color: var(--red-500); }
+
+.toast-icon { font-size: 20px; flex-shrink: 0; }
+.toast-text { flex: 1; font-size: 13px; }
+.toast-close {
+  cursor: pointer;
+  color: var(--ink-faint);
+  font-size: 16px;
+  padding: 4px;
+  border: none;
+  background: none;
+}
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════ */
+.empty-state {
+  text-align: center;
+  padding: var(--space-4xl) var(--space-2xl);
+}
+
+.empty-icon { font-size: 48px; margin-bottom: var(--space-lg); opacity: 0.6; }
+.empty-title { font-family: var(--font-serif); font-size: 20px; font-weight: 700; margin-bottom: var(--space-sm); }
+.empty-desc { font-size: 14px; color: var(--ink-muted); margin-bottom: var(--space-xl); }
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-stagger > * {
+  animation: fadeInUp 0.5s var(--ease-out) both;
+}
+.animate-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.animate-stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.animate-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.animate-stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.animate-stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.animate-stagger > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* Vote animation */
+.vote-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+  background: currentColor;
+  opacity: 0;
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.3; }
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════
+   DISCUSSION PAGE
+   ═══════════════════════════════════════════ */
+.discussion-thread {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(26,22,20,0.05);
+  margin-bottom: var(--space-lg);
+  overflow: hidden;
+}
+
+.discussion-header {
+  padding: var(--space-lg) var(--space-xl);
+  border-bottom: 1px solid rgba(26,22,20,0.04);
+}
+
+.discussion-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.discussion-meta {
+  font-size: 12px;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.discussion-comments {
+  padding: var(--space-lg) var(--space-xl);
+}
+
+.comment {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid rgba(26,22,20,0.03);
+}
+
+.comment:last-child { border-bottom: none; }
+
+.comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--teal-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal-700);
+  flex-shrink: 0;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-author {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.comment-author span {
+  font-weight: 400;
+  color: var(--ink-faint);
+  font-size: 11px;
+  margin-left: var(--space-sm);
+}
+
+.comment-text {
+  font-size: 13px;
+  color: var(--ink-light);
+  line-height: 1.6;
+}
+
+.comment-actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.comment-action {
+  font-size: 12px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  transition: color 0.2s;
+}
+
+.comment-action:hover { color: var(--teal-500); }
+
+.comment-input-area {
+  padding: var(--space-md) var(--space-xl) var(--space-lg);
+  display: flex;
+  gap: var(--space-md);
+}
+
+.comment-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid rgba(26,22,20,0.1);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  resize: none;
+  min-height: 40px;
+  transition: all 0.2s;
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: var(--teal-400);
+  box-shadow: 0 0 0 3px rgba(42,143,143,0.1);
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE SIDEBAR TOGGLE
+   ═══════════════════════════════════════════ */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: var(--space-md);
+  left: var(--space-md);
+  z-index: 150;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--teal-800);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .hero-quote { display: none; }
+  .stats-overview { grid-template-columns: repeat(2, 1fr); }
+  .profile-header-card { flex-direction: column; text-align: center; }
+  .profile-stats-row { justify-content: center; }
+}
+
+@media (max-width: 768px) {
+  .mobile-toggle { display: flex; }
+  
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open { transform: translateX(0); }
+  
+  .main-content { margin-left: 0; }
+  
+  .main-header { padding: 0 var(--space-lg); padding-left: 60px; }
+  
+  .page-content { padding: var(--space-lg); }
+  
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  
+  .vote-options { flex-direction: column; }
+  
+  .proposals-grid { grid-template-columns: 1fr; }
+  
+  .dashboard-hero { padding: var(--space-xl); }
+  .hero-title { font-size: 24px; }
+  
+  .search-box { display: none; }
+  
+  .council-grid { grid-template-columns: repeat(2, 1fr); }
+  
+  .badges-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .stats-overview { grid-template-columns: 1fr; }
+  .council-grid { grid-template-columns: 1fr; }
+  .quick-actions { grid-template-columns: 1fr; }
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,38,38,0.5);
+  z-index: 90;
+}
+
+.sidebar-overlay.active { display: block; }
+
+/* ═══════════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════════ */
+@media print {
+  .sidebar, .main-header, .mobile-toggle { display: none !important; }
+  .main-content { margin-left: 0; }
+  .page-content { padding: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════ -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">☰</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">
+      <div class="brand-icon">🏛</div>
+      <div class="brand-text">
+        <h1>新公民广场</h1>
+        <p>Civic Square</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">总览</div>
+      <div class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <span class="icon">📊</span>
+        <span>仪表盘</span>
+      </div>
+      <div class="nav-item" data-page="proposals" onclick="navigateTo('proposals')">
+        <span class="icon">📜</span>
+        <span>提案广场</span>
+        <span class="nav-badge">3</span>
+      </div>
+      <div class="nav-item" data-page="voting" onclick="navigateTo('voting')">
+        <span class="icon">🗳</span>
+        <span>投票中心</span>
+        <span class="nav-badge">2</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">治理</div>
+      <div class="nav-item" data-page="council" onclick="navigateTo('council')">
+        <span class="icon">👥</span>
+        <span>班级议会</span>
+      </div>
+      <div class="nav-item" data-page="charter" onclick="navigateTo('charter')">
+        <span class="icon">⚖</span>
+        <span>班级宪章</span>
+      </div>
+      <div class="nav-item" data-page="discussions" onclick="navigateTo('discussions')">
+        <span class="icon">💬</span>
+        <span>公共讨论</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">数据</div>
+      <div class="nav-item" data-page="statistics" onclick="navigateTo('statistics')">
+        <span class="icon">📈</span>
+        <span>数据统计</span>
+      </div>
+      <div class="nav-item" data-page="profile" onclick="navigateTo('profile')">
+        <span class="icon">👤</span>
+        <span>个人中心</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card" onclick="navigateTo('profile')">
+      <div class="user-avatar">张</div>
+      <div class="user-info">
+        <div class="user-name">张明远</div>
+        <div class="user-role">班长 · 议员</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════ -->
+<main class="main-content">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-left">
+      <div class="header-breadcrumb">
+        <span>首页</span>
+        <span class="sep">›</span>
+        <span class="current" id="breadcrumb">仪表盘</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="搜索提案、投票、讨论…" />
+      </div>
+      <button class="header-btn" title="通知">
+        🔔
+        <span class="badge-dot"></span>
+      </button>
+      <button class="header-btn" title="设置">⚙</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════ DASHBOARD ═══════════════ -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-content">
+      <!-- Hero -->
+      <div class="dashboard-hero">
+        <div class="hero-content">
+          <div class="hero-greeting">欢迎回来，张明远同学</div>
+          <h2 class="hero-title">让每一个声音<br>都被听见</h2>
+          <p class="hero-subtitle">
+            今天是2026年6月11日，星期三。班级正在讨论2项提案，1项投票正在进行中。
+            你已参与了本月87%的投票。
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-amber btn-lg" onclick="openModal('proposal')">
+              ✍ 提交新提案
+            </button>
+            <button class="btn btn-secondary btn-lg" style="background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2);" onclick="navigateTo('voting')">
+              🗳 前往投票
+            </button>
+          </div>
+        </div>
+        <div class="hero-quote">
+          <blockquote>
+            "教育的目的不是灌输知识，<br>而是培养独立思考的公民。"
+          </blockquote>
+          <cite>—— 约翰·杜威</cite>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid animate-stagger">
+        <div class="stat-card">
+          <div class="stat-icon">📜</div>
+          <div class="stat-value">24</div>
+          <div class="stat-label">累计提案数</div>
+          <div class="stat-trend up">↑ 12% 较上月</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🗳</div>
+          <div class="stat-value">18</div>
+          <div class="stat-label">已完成投票</div>
+          <div class="stat-trend up">↑ 8% 较上月</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value">92%</div>
+          <div class="stat-label">平均参与率</div>
+          <div class="stat-trend up">↑ 5% 较上月</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value">15</div>
+          <div class="stat-label">已执行决议</div>
+          <div class="stat-trend up">↑ 3 项新执行</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Left: Recent Proposals -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="icon">📜</span> 最新提案</h3>
+            <button class="card-action" onclick="navigateTo('proposals')">查看全部 →</button>
+          </div>
+          <div class="card-body">
+            <div class="proposal-item" onclick="navigateTo('proposals')">
+              <div class="proposal-status voting">🗳</div>
+              <div class="proposal-info">
+                <div class="proposal-title">关于设立"班级读书角"的提案</div>
+                <div class="proposal-meta">
+                  <span class="proposal-tag tag-life">生活</span>
+                  <span>李雨桐 提出</span>
+                  <span>· 投票中</span>
+                </div>
+              </div>
+            </div>
+            <div class="proposal-item" onclick="navigateTo('proposals')">
+              <div class="proposal-status discussing">💬</div>
+              <div class="proposal-info">
+                <div class="proposal-title">调整课间操时间安排的建议</div>
+                <div class="proposal-meta">
+                  <span class="proposal-tag tag-study">学习</span>
+                  <span>王浩然 提出</span>
+                  <span>· 讨论中</span>
+                </div>
+              </div>
+            </div>
+            <div class="proposal-item" onclick="navigateTo('proposals')">
+              <div class="proposal-status passed">✅</div>
+              <div class="proposal-info">
+                <div class="proposal-title">班级值日制度优化方案</div>
+                <div class="proposal-meta">
+                  <span class="proposal-tag tag-rule">制度</span>
+                  <span>张明远 提出</span>
+                  <span>· 已通过</span>
+                </div>
+              </div>
+            </div>
+            <div class="proposal-item" onclick="navigateTo('proposals')">
+              <div class="proposal-status draft">📝</div>
+              <div class="proposal-info">
+                <div class="proposal-title">组织班级秋季运动会的建议</div>
+                <div class="proposal-meta">
+                  <span class="proposal-tag tag-activity">活动</span>
+                  <span>陈思涵 提出</span>
+                  <span>· 草稿中</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Activity & Quick Actions -->
+        <div>
+          <!-- Activity -->
+          <div class="card" style="margin-bottom: var(--space-lg);">
+            <div class="card-header">
+              <h3 class="card-title"><span class="icon">⚡</span> 最近动态</h3>
+            </div>
+            <div class="card-body">
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-dot amber"></div>
+                  <div class="timeline-content">
+                    <strong>投票开启</strong>：关于设立"班级读书角"的提案进入投票阶段
+                  </div>
+                  <div class="timeline-time">今天 09:30</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-content">
+                    <strong>新提案</strong>：陈思涵提交了"组织班级秋季运动会"的提案
+                  </div>
+                  <div class="timeline-time">昨天 16:20</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot green"></div>
+                  <div class="timeline-content">
+                    <strong>决议通过</strong>："班级值日制度优化方案"以89%支持率通过
+                  </div>
+                  <div class="timeline-time">昨天 14:00</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-content">
+                    <strong>议会会议</strong>：第三次班级议会将于本周五召开
+                  </div>
+                  <div class="timeline-time">6月9日</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="icon">🚀</span> 快速操作</h3>
+            </div>
+            <div class="card-body">
+              <div class="quick-actions">
+                <div class="quick-action" onclick="openModal('proposal')">
+                  <span class="icon">✍</span>
+                  <span class="label">提交提案</span>
+                  <span class="desc">发起新议题</span>
+                </div>
+                <div class="quick-action" onclick="navigateTo('voting')">
+                  <span class="icon">🗳</span>
+                  <span class="label">参与投票</span>
+                  <span class="desc">2项待投票</span>
+                </div>
+                <div class="quick-action" onclick="navigateTo('discussions')">
+                  <span class="icon">💬</span>
+                  <span class="label">参与讨论</span>
+                  <span class="desc">发表观点</span>
+                </div>
+                <div class="quick-action" onclick="navigateTo('charter')">
+                  <span class="icon">📖</span>
+                  <span class="label">查阅宪章</span>
+                  <span class="desc">班级公约</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PROPOSALS ═══════════════ -->
+  <div class="page" id="page-proposals">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>📜 提案广场</h2>
+          <p class="page-header-desc">每位同学都有权提交提案，让班级因你而改变</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('proposal')">✍ 提交新提案</button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-tabs">
+          <button class="filter-tab active">全部</button>
+          <button class="filter-tab">投票中</button>
+          <button class="filter-tab">讨论中</button>
+          <button class="filter-tab">已通过</button>
+          <button class="filter-tab">已否决</button>
+        </div>
+        <div class="filter-chips">
+          <span class="chip active">全部类型</span>
+          <span class="chip">📚 学习</span>
+          <span class="chip">🏠 生活</span>
+          <span class="chip">📋 制度</span>
+          <span class="chip">🎯 活动</span>
+          <span class="chip">🌿 环境</span>
+        </div>
+      </div>
+
+      <div class="proposals-grid animate-stagger">
+        <!-- Proposal 1 -->
+        <div class="proposal-card" onclick="navigateTo('voting')">
+          <div class="proposal-card-header">
+            <span class="proposal-number">#P-024</span>
+            <span class="proposal-card-status status-voting">🗳 投票中</span>
+          </div>
+          <h3 class="proposal-card-title">关于设立"班级读书角"的提案</h3>
+          <p class="proposal-card-desc">
+            建议在教室后排设立一个小型图书角，每位同学可以捐赠2-3本好书，
+            定期轮换。同时设立"读书分享日"，每月最后一个周五进行读书交流。
+          </p>
+          <div class="vote-progress">
+            <div class="vote-bar">
+              <div class="vote-bar-for" style="width: 68%"></div>
+              <div class="vote-bar-against" style="width: 18%"></div>
+              <div class="vote-bar-abstain" style="width: 14%"></div>
+            </div>
+            <div class="vote-labels">
+              <span style="color:var(--green-500)">赞成 68%</span>
+              <span style="color:var(--red-500)">反对 18%</span>
+              <span>弃权 14%</span>
+            </div>
+          </div>
+          <div class="proposal-card-footer">
+            <div class="proposal-author">
+              <div class="proposal-author-avatar">李</div>
+              <span class="proposal-author-name">李雨桐</span>
+            </div>
+            <div class="proposal-stats">
+              <span>💬 12</span>
+              <span>👍 28</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal 2 -->
+        <div class="proposal-card">
+          <div class="proposal-card-header">
+            <span class="proposal-number">#P-023</span>
+            <span class="proposal-card-status status-discussing">💬 讨论中</span>
+          </div>
+          <h3 class="proposal-card-title">调整课间操时间安排的建议</h3>
+          <p class="proposal-card-desc">
+            建议将课间操时间从第二节课后调整为第三节课后，
+            因为上午第三节是数学课，课间操可以帮助同学们放松大脑，
+            提高下午的学习效率。
+          </p>
+          <div class="proposal-card-footer">
+            <div class="proposal-author">
+              <div class="proposal-author-avatar">王</div>
+              <span class="proposal-author-name">王浩然</span>
+            </div>
+            <div class="proposal-stats">
+              <span>💬 8</span>
+              <span>👍 15</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal 3 -->
+        <div class="proposal-card">
+          <div class="proposal-card-header">
+            <span class="proposal-number">#P-022</span>
+            <span class="proposal-card-status status-passed">✅ 已通过</span>
+          </div>
+          <h3 class="proposal-card-title">班级值日制度优化方案</h3>
+          <p class="proposal-card-desc">
+            提议将现行的"每人一天"值日制度改为"小组轮值制"，
+            每组4-5人，每周轮换一次。增加"值日组长"负责分配任务和检查，
+            提高值日效率和质量。
+          </p>
+          <div class="vote-progress">
+            <div class="vote-bar">
+              <div class="vote-bar-for" style="width: 89%"></div>
+              <div class="vote-bar-against" style="width: 7%"></div>
+              <div class="vote-bar-abstain" style="width: 4%"></div>
+            </div>
+            <div class="vote-labels">
+              <span style="color:var(--green-500)">赞成 89%</span>
+              <span style="color:var(--red-500)">反对 7%</span>
+              <span>弃权 4%</span>
+            </div>
+          </div>
+          <div class="proposal-card-footer">
+            <div class="proposal-author">
+              <div class="proposal-author-avatar">张</div>
+              <span class="proposal-author-name">张明远</span>
+            </div>
+            <div class="proposal-stats">
+              <span>💬 20</span>
+              <span>👍 35</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal 4 -->
+        <div class="proposal-card">
+          <div class="proposal-card-header">
+            <span class="proposal-number">#P-021</span>
+            <span class="proposal-card-status status-voting">🗳 投票中</span>
+          </div>
+          <h3 class="proposal-card-title">建立"班级环保积分"制度</h3>
+          <p class="proposal-card-desc">
+            设立环保积分系统，对节约用水用电、减少纸张浪费、垃圾分类等行为加分，
+            每月统计积分前三名给予奖励，培养同学们的环保意识。
+          </p>
+          <div class="vote-progress">
+            <div class="vote-bar">
+              <div class="vote-bar-for" style="width: 55%"></div>
+              <div class="vote-bar-against" style="width: 30%"></div>
+              <div class="vote-bar-abstain" style="width: 15%"></div>
+            </div>
+            <div class="vote-labels">
+              <span style="color:var(--green-500)">赞成 55%</span>
+              <span style="color:var(--red-500)">反对 30%</span>
+              <span>弃权 15%</span>
+            </div>
+          </div>
+          <div class="proposal-card-footer">
+            <div class="proposal-author">
+              <div class="proposal-author-avatar">赵</div>
+              <span class="proposal-author-name">赵晓婷</span>
+            </div>
+            <div class="proposal-stats">
+              <span>💬 16</span>
+              <span>👍 22</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal 5 -->
+        <div class="proposal-card">
+          <div class="proposal-card-header">
+            <span class="proposal-number">#P-020</span>
+            <span class="proposal-card-status status-rejected">❌ 已否决</span>
+          </div>
+          <h3 class="proposal-card-title">取消班级干部轮换制度的提案</h3>
+          <p class="proposal-card-desc">
+            有同学建议取消班干部轮换制，改为固定任期。但经过充分讨论和投票，
+            多数同学认为轮换制度有利于更多同学参与班级管理，该提案未获通过。
+          </p>
+          <div class="vote-progress">
+            <div class="vote-bar">
+              <div class="vote-bar-for" style="width: 32%"></div>
+              <div class="vote-bar-against" style="width: 56%"></div>
+              <div class="vote-bar-abstain" style="width: 12%"></div>
+            </div>
+            <div class="vote-labels">
+              <span style="color:var(--green-500)">赞成 32%</span>
+              <span style="color:var(--red-500)">反对 56%</span>
+              <span>弃权 12%</span>
+            </div>
+          </div>
+          <div class="proposal-card-footer">
+            <div class="proposal-author">
+              <div class="proposal-author-avatar">刘</div>
+              <span class="proposal-author-name">刘子轩</span>
+            </div>
+            <div class="proposal-stats">
+              <span>💬 25</span>
+              <span>👍 10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal 6 -->
+        <div class="proposal-card">
+          <div class="proposal-card-header">
+            <span class="proposal-number">#P-019</span>
+            <span class="proposal-card-status status-draft">📝 草稿</span>
+          </div>
+          <h3 class="proposal-card-title">组织班级秋季运动会的建议</h3>
+          <p class="proposal-card-desc">
+            建议在秋季举办班级运动会，设置个人和团体项目，
+            邀请家长观摩。目前正在征集同学们感兴趣的运动项目。
+          </p>
+          <div class="proposal-card-footer">
+            <div class="proposal-author">
+              <div class="proposal-author-avatar">陈</div>
+              <span class="proposal-author-name">陈思涵</span>
+            </div>
+            <div class="proposal-stats">
+              <span>💬 5</span>
+              <span>👍 18</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ VOTING ═══════════════ -->
+  <div class="page" id="page-voting">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>🗳 投票中心</h2>
+          <p class="page-header-desc">你的每一票都很重要，请认真行使投票权</p>
+        </div>
+      </div>
+
+      <!-- Active Vote 1 -->
+      <div class="voting-card" id="vote-1">
+        <div class="voting-header">
+          <div>
+            <h3 class="voting-title">关于设立"班级读书角"的提案</h3>
+            <p style="font-size:13px;color:var(--ink-muted);margin-top:8px;">
+              提案编号 #P-024 · 提案人：李雨桐 · 投票类型：匿名投票
+            </p>
+          </div>
+          <div class="voting-timer">
+            <div class="voting-timer-label">距离截止</div>
+            <div class="voting-timer-value" id="timer-1">23:45:12</div>
+          </div>
+        </div>
+
+        <div class="voting-desc">
+          建议在教室后排设立一个小型图书角，每位同学可以捐赠2-3本好书，定期轮换。
+          同时设立"读书分享日"，每月最后一个周五进行读书交流。
+          班费将拨出200元用于购买书架和图书标签。
+        </div>
+
+        <div class="vote-options" id="vote-options-1">
+          <div class="vote-option for" onclick="castVote(1, 'for')">
+            <div class="vote-option-icon">👍</div>
+            <div class="vote-option-label">赞成</div>
+            <div class="vote-option-count" id="vote-1-for-count">27</div>
+            <div class="result-bar-container">
+              <div class="result-bar for" style="width: 68%"></div>
+            </div>
+            <div class="vote-option-pct">68%</div>
+          </div>
+          <div class="vote-option against" onclick="castVote(1, 'against')">
+            <div class="vote-option-icon">👎</div>
+            <div class="vote-option-label">反对</div>
+            <div class="vote-option-count" id="vote-1-against-count">7</div>
+            <div class="result-bar-container">
+              <div class="result-bar against" style="width: 18%"></div>
+            </div>
+            <div class="vote-option-pct">18%</div>
+          </div>
+          <div class="vote-option abstain" onclick="castVote(1, 'abstain')">
+            <div class="vote-option-icon">🤷</div>
+            <div class="vote-option-label">弃权</div>
+            <div class="vote-option-count" id="vote-1-abstain-count">6</div>
+            <div class="result-bar-container">
+              <div class="result-bar abstain" style="width: 14%"></div>
+            </div>
+            <div class="vote-option-pct">14%</div>
+          </div>
+        </div>
+
+        <div class="vote-submit-area">
+          <div class="vote-warning">
+            ⚠ 投票一旦提交不可更改，请慎重选择
+          </div>
+          <div style="display:flex;align-items:center;gap:var(--space-md);">
+            <span style="font-size:13px;color:var(--ink-muted);">已投票 40/43 人</span>
+            <div style="width:120px;height:6px;background:rgba(26,22,20,0.06);border-radius:3px;overflow:hidden;">
+              <div style="width:93%;height:100%;background:var(--teal-400);border-radius:3px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Vote 2 -->
+      <div class="voting-card" id="vote-2">
+        <div class="voting-header">
+          <div>
+            <h3 class="voting-title">建立"班级环保积分"制度</h3>
+            <p style="font-size:13px;color:var(--ink-muted);margin-top:8px;">
+              提案编号 #P-021 · 提案人：赵晓婷 · 投票类型：记名投票
+            </p>
+          </div>
+          <div class="voting-timer">
+            <div class="voting-timer-label">距离截止</div>
+            <div class="voting-timer-value" id="timer-2">47:22:08</div>
+          </div>
+        </div>
+
+        <div class="voting-desc">
+          设立环保积分系统，对节约用水用电、减少纸张浪费、垃圾分类等行为加分，
+          每月统计积分前三名给予奖励（文具、书籍等），培养同学们的环保意识。
+          预计每月奖励预算50元。
+        </div>
+
+        <div class="vote-options" id="vote-options-2">
+          <div class="vote-option for" onclick="castVote(2, 'for')">
+            <div class="vote-option-icon">👍</div>
+            <div class="vote-option-label">赞成</div>
+            <div class="vote-option-count" id="vote-2-for-count">22</div>
+            <div class="result-bar-container">
+              <div class="result-bar for" style="width: 55%"></div>
+            </div>
+            <div class="vote-option-pct">55%</div>
+          </div>
+          <div class="vote-option against" onclick="castVote(2, 'against')">
+            <div class="vote-option-icon">👎</div>
+            <div class="vote-option-label">反对</div>
+            <div class="vote-option-count" id="vote-2-against-count">12</div>
+            <div class="result-bar-container">
+              <div class="result-bar against" style="width: 30%"></div>
+            </div>
+            <div class="vote-option-pct">30%</div>
+          </div>
+          <div class="vote-option abstain" onclick="castVote(2, 'abstain')">
+            <div class="vote-option-icon">🤷</div>
+            <div class="vote-option-label">弃权</div>
+            <div class="vote-option-count" id="vote-2-abstain-count">6</div>
+            <div class="result-bar-container">
+              <div class="result-bar abstain" style="width: 15%"></div>
+            </div>
+            <div class="vote-option-pct">15%</div>
+          </div>
+        </div>
+
+        <div class="vote-submit-area">
+          <div class="vote-warning">
+            ⚠ 记名投票：你的选择将被记录
+          </div>
+          <div style="display:flex;align-items:center;gap:var(--space-md);">
+            <span style="font-size:13px;color:var(--ink-muted);">已投票 40/43 人</span>
+            <div style="width:120px;height:6px;background:rgba(26,22,20,0.06);border-radius:3px;overflow:hidden;">
+              <div style="width:93%;height:100%;background:var(--teal-400);border-radius:3px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Votes Summary -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><span class="icon">📋</span> 历史投票记录</h3>
+        </div>
+        <div class="card-body">
+          <div class="proposal-item">
+            <div class="proposal-status passed">✅</div>
+            <div class="proposal-info">
+              <div class="proposal-title">班级值日制度优化方案</div>
+              <div class="proposal-meta">
+                <span class="proposal-tag tag-rule">制度</span>
+                <span>赞成 89% · 参与率 100%</span>
+                <span>· 6月10日截止</span>
+              </div>
+            </div>
+          </div>
+          <div class="proposal-item">
+            <div class="proposal-status" style="background:var(--red-100)">❌</div>
+            <div class="proposal-info">
+              <div class="proposal-title">取消班级干部轮换制度</div>
+              <div class="proposal-meta">
+                <span class="proposal-tag tag-rule">制度</span>
+                <span>赞成 32% · 参与率 95%</span>
+                <span>· 6月5日截止</span>
+              </div>
+            </div>
+          </div>
+          <div class="proposal-item">
+            <div class="proposal-status passed">✅</div>
+            <div class="proposal-info">
+              <div class="proposal-title">延长午休时间至30分钟</div>
+              <div class="proposal-meta">
+                <span class="proposal-tag tag-life">生活</span>
+                <span>赞成 92% · 参与率 98%</span>
+                <span>· 5月28日截止</span>
+              </div>
+            </div>
+          </div>
+          <div class="proposal-item">
+            <div class="proposal-status passed">✅</div>
+            <div class="proposal-info">
+              <div class="proposal-title">设立班级"学习互助日"</div>
+              <div class="proposal-meta">
+                <span class="proposal-tag tag-study">学习</span>
+                <span>赞成 85% · 参与率 93%</span>
+                <span>· 5月15日截止</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ COUNCIL ═══════════════ -->
+  <div class="page" id="page-council">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>👥 班级议会</h2>
+          <p class="page-header-desc">班级议会由全体同学选举产生，负责审议提案、组织投票、执行决议</p>
+        </div>
+      </div>
+
+      <div class="council-grid animate-stagger">
+        <div class="council-member">
+          <span class="council-badge">👑</span>
+          <div class="council-avatar chair">张</div>
+          <div class="council-name">张明远</div>
+          <div class="council-role">议长 · 班长</div>
+          <div class="council-votes">🗳 获票 38 票</div>
+        </div>
+        <div class="council-member">
+          <span class="council-badge">⭐</span>
+          <div class="council-avatar vice">李</div>
+          <div class="council-name">李雨桐</div>
+          <div class="council-role">副议长 · 副班长</div>
+          <div class="council-votes">🗳 获票 35 票</div>
+        </div>
+        <div class="council-member">
+          <span class="council-badge">📝</span>
+          <div class="council-avatar secretary">陈</div>
+          <div class="council-name">陈思涵</div>
+          <div class="council-role">书记员 · 学习委员</div>
+          <div class="council-votes">🗳 获票 32 票</div>
+        </div>
+        <div class="council-member">
+          <div class="council-avatar member">王</div>
+          <div class="council-name">王浩然</div>
+          <div class="council-role">议员</div>
+          <div class="council-votes">🗳 获票 28 票</div>
+        </div>
+        <div class="council-member">
+          <div class="council-avatar member">赵</div>
+          <div class="council-name">赵晓婷</div>
+          <div class="council-role">议员</div>
+          <div class="council-votes">🗳 获票 26 票</div>
+        </div>
+        <div class="council-member">
+          <div class="council-avatar member">刘</div>
+          <div class="council-name">刘子轩</div>
+          <div class="council-role">议员</div>
+          <div class="council-votes">🗳 获票 24 票</div>
+        </div>
+      </div>
+
+      <!-- Upcoming Meetings -->
+      <h3 style="font-family:var(--font-serif);font-size:20px;font-weight:700;margin-bottom:var(--space-lg);display:flex;align-items:center;gap:var(--space-sm);">
+        📅 议会会议日程
+      </h3>
+
+      <div class="meeting-card">
+        <div class="meeting-date">
+          <span class="month">六月</span>
+          <span class="day">13</span>
+        </div>
+        <div class="meeting-content">
+          <div class="meeting-title">第四次班级议会会议</div>
+          <div class="meeting-time">周五 16:30 - 17:30 · 教室</div>
+          <div class="meeting-agenda">议程：审议读书角提案投票结果、讨论运动会方案、环保积分制度细则</div>
+        </div>
+      </div>
+
+      <div class="meeting-card">
+        <div class="meeting-date">
+          <span class="month">六月</span>
+          <span class="day">6</span>
+        </div>
+        <div class="meeting-content">
+          <div class="meeting-title">第三次班级议会会议</div>
+          <div class="meeting-time">周五 16:30 - 17:15 · 教室</div>
+          <div class="meeting-agenda">议程：值日制度改革投票、读书角提案初审、环保积分制度讨论</div>
+        </div>
+      </div>
+
+      <div class="meeting-card">
+        <div class="meeting-date">
+          <span class="month">五月</span>
+          <span class="day">30</span>
+        </div>
+        <div class="meeting-content">
+          <div class="meeting-title">第二次班级议会会议</div>
+          <div class="meeting-time">周五 16:30 - 17:00 · 教室</div>
+          <div class="meeting-agenda">议程：午休时间延长提案审议、选举互助日方案</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ CHARTER ═══════════════ -->
+  <div class="page" id="page-charter">
+    <div class="page-content">
+      <div class="charter-container">
+        <div class="charter-header">
+          <div class="charter-emblem">⚖</div>
+          <h2 class="charter-title">班级宪章</h2>
+          <p class="charter-subtitle">CLASS CHARTER · 第一版</p>
+        </div>
+
+        <div class="charter-articles">
+          <div class="charter-article">
+            <div class="charter-article-number">第一条</div>
+            <h3 class="charter-article-title">总则</h3>
+            <p class="charter-article-text">
+              本班实行民主管理制度，全体同学是班级的主人。每位同学都享有平等的权利参与班级事务的讨论、
+              投票和决策。班级的一切权力来源于全体同学的授权。
+            </p>
+          </div>
+
+          <div class="charter-article">
+            <div class="charter-article-number">第二条</div>
+            <h3 class="charter-article-title">基本权利</h3>
+            <p class="charter-article-text">
+              每位同学享有以下基本权利：（一）提案权：有权就班级事务提出建议和方案；
+              （二）投票权：有权对所有提案进行投票，表达赞成、反对或弃权；
+              （三）发言权：有权在公共讨论中自由发表意见；（四）选举权和被选举权：
+              有权参与班干部选举，也有权参选。
+            </p>
+          </div>
+
+          <div class="charter-article">
+            <div class="charter-article-number">第三条</div>
+            <h3 class="charter-article-title">提案制度</h3>
+            <p class="charter-article-text">
+              任何同学都可以提交提案。提案须包含标题、具体内容、实施方案和预期效果。
+              提案提交后先进入讨论期（不少于3天），充分听取各方意见后方可进入投票程序。
+              获得三分之二以上赞成票的提案即为通过。
+            </p>
+          </div>
+
+          <div class="charter-article">
+            <div class="charter-article-number">第四条</div>
+            <h3 class="charter-article-title">投票规则</h3>
+            <p class="charter-article-text">
+              投票分为记名投票和匿名投票两种方式。涉及人事选举的采用匿名投票，
+              其他事项由提案人选择投票方式。投票率须达到全班人数的80%以上方为有效。
+              每位同学的投票权平等，一人一票。
+            </p>
+          </div>
+
+          <div class="charter-article">
+            <div class="charter-article-number">第五条</div>
+            <h3 class="charter-article-title">班级议会</h3>
+            <p class="charter-article-text">
+              班级议会是班级的议事机构，由6名议员组成，包括议长1名、副议长1名、书记员1名和普通议员3名。
+              议员每学期选举一次，可连选连任。议会负责审议提案、监督决议执行、组织班级活动。
+            </p>
+            <div class="charter-amendment">
+              <span class="charter-amendment-badge">修正案 #1</span>
+              <span class="charter-amendment-text">议员任期由一学期修改为两学月，增加轮换机会。2026年5月通过。</span>
+            </div>
+          </div>
+
+          <div class="charter-article">
+            <div class="charter-article-number">第六条</div>
+            <h3 class="charter-article-title">宪章修改</h3>
+            <p class="charter-article-text">
+              本宪章的修改须经班级议会讨论后提出修正案，再由全体同学投票表决。
+              修正案须获得四分之三以上赞成票方可通过。每学期限修改一次。
+            </p>
+          </div>
+
+          <div class="charter-article">
+            <div class="charter-article-number">第七条</div>
+            <h3 class="charter-article-title">附则</h3>
+            <p class="charter-article-text">
+              本宪章自全体同学投票通过之日起生效。本宪章的解释权归班级议会所有。
+              如有未尽事宜，由议会讨论决定。
+            </p>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:var(--space-xl);">
+          <p style="font-size:13px;color:var(--ink-muted);margin-bottom:var(--space-md);">
+            📅 立宪日期：2026年3月15日 · 最后修订：2026年5月20日
+          </p>
+          <button class="btn btn-secondary" onclick="showToast('提案功能已开放，请在提案广场提交修正案', 'success')">
+            📝 提交修正案
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ DISCUSSIONS ═══════════════ -->
+  <div class="page" id="page-discussions">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>💬 公共讨论</h2>
+          <p class="page-header-desc">在这里自由发表意见，理性讨论，共同进步</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('discussion')">💬 发起讨论</button>
+      </div>
+
+      <!-- Discussion 1 -->
+      <div class="discussion-thread">
+        <div class="discussion-header">
+          <h3 class="discussion-title">关于读书角的具体实施方案</h3>
+          <div class="discussion-meta">
+            <span>发起人：李雨桐</span>
+            <span>·</span>
+            <span>12条回复</span>
+            <span>·</span>
+            <span>最后回复：2小时前</span>
+          </div>
+        </div>
+        <div class="discussion-comments">
+          <div class="comment">
+            <div class="comment-avatar">李</div>
+            <div class="comment-content">
+              <div class="comment-author">李雨桐 <span>提案人</span></div>
+              <div class="comment-text">
+                大家好！关于读书角的具体实施方案，我有几个想法想和大家讨论：
+                1. 书架位置建议放在教室后排靠窗的位置，不影响正常活动；
+                2. 每人捐赠2-3本书，学期末归还；
+                3. 设立图书管理员，每周轮换。大家觉得怎么样？
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action">👍 12</button>
+                <button class="comment-action">💬 回复</button>
+              </div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar">王</div>
+            <div class="comment-content">
+              <div class="comment-author">王浩然</div>
+              <div class="comment-text">
+                我很支持这个想法！不过我想补充一点，建议增加一个"好书推荐"环节，
+                每月推荐一本最受欢迎的书，推荐者可以写一段推荐语贴在书架旁。
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action">👍 8</button>
+                <button class="comment-action">💬 回复</button>
+              </div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar">赵</div>
+            <div class="comment-content">
+              <div class="comment-author">赵晓婷</div>
+              <div class="comment-text">
+                我觉得可以设置一个"漂流瓶"式的读书笔记，读完一本书后在笔记本上写下感想，
+                下一位读者可以继续写，形成一个读书交流的链条。
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action">👍 15</button>
+                <button class="comment-action">💬 回复</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-input-area">
+          <div class="comment-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--teal-100);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--teal-700);flex-shrink:0;">张</div>
+          <textarea class="comment-input" placeholder="发表你的看法…" rows="1"></textarea>
+          <button class="btn btn-primary btn-sm">发送</button>
+        </div>
+      </div>
+
+      <!-- Discussion 2 -->
+      <div class="discussion-thread">
+        <div class="discussion-header">
+          <h3 class="discussion-title">课间操时间调整的利弊分析</h3>
+          <div class="discussion-meta">
+            <span>发起人：王浩然</span>
+            <span>·</span>
+            <span>8条回复</span>
+            <span>·</span>
+            <span>最后回复：5小时前</span>
+          </div>
+        </div>
+        <div class="discussion-comments">
+          <div class="comment">
+            <div class="comment-avatar">王</div>
+            <div class="comment-content">
+              <div class="comment-author">王浩然 <span>提案人</span></div>
+              <div class="comment-text">
+                我做了一个小调查，发现班上大部分同学在数学课后会觉得比较疲倦。
+                如果把课间操调整到第三节后，可以起到很好的提神效果。
+                但我也考虑到可能会影响其他班级的安排，想听听大家的意见。
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action">👍 6</button>
+                <button class="comment-action">💬 回复</button>
+              </div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar">刘</div>
+            <div class="comment-content">
+              <div class="comment-author">刘子轩</div>
+              <div class="comment-text">
+                我觉得可以先试行一周看看效果。如果大多数同学觉得好，再正式申请。
+                另外建议做个对比实验：一周按原时间，一周按新时间，记录下午第一节课的专注度。
+              </div>
+              <div class="comment-actions">
+                <button class="comment-action">👍 10</button>
+                <button class="comment-action">💬 回复</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-input-area">
+          <div class="comment-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--teal-100);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--teal-700);flex-shrink:0;">张</div>
+          <textarea class="comment-input" placeholder="发表你的看法…" rows="1"></textarea>
+          <button class="btn btn-primary btn-sm">发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STATISTICS ═══════════════ -->
+  <div class="page" id="page-statistics">
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h2>📈 数据统计</h2>
+          <p class="page-header-desc">用数据见证班级民主实践的成长</p>
+        </div>
+      </div>
+
+      <!-- Overview Stats -->
+      <div class="stats-overview animate-stagger">
+        <div class="stats-big-card">
+          <div class="stats-big-number">92%</div>
+          <div class="stats-big-label">平均投票参与率</div>
+        </div>
+        <div class="stats-big-card">
+          <div class="stats-big-number" style="color:var(--amber-500);">24</div>
+          <div class="stats-big-label">累计提案数</div>
+        </div>
+        <div class="stats-big-card">
+          <div class="stats-big-number" style="color:var(--green-500);">15</div>
+          <div class="stats-big-label">已执行决议</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-xl);">
+        <!-- Monthly Activity Chart -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">月度活动统计</h3>
+            <div class="filter-tabs" style="font-size:12px;">
+              <button class="filter-tab active">提案</button>
+              <button class="filter-tab">投票</button>
+              <button class="filter-tab">讨论</button>
+            </div>
+          </div>
+          <div class="chart-body">
+            <div class="bar-chart">
+              <div class="bar-group">
+                <div class="bar-value">5</div>
+                <div class="bar teal" style="height:42%"></div>
+                <div class="bar-label">1月</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">3</div>
+                <div class="bar teal" style="height:25%"></div>
+                <div class="bar-label">2月</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">7</div>
+                <div class="bar teal" style="height:58%"></div>
+                <div class="bar-label">3月</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">4</div>
+                <div class="bar amber" style="height:33%"></div>
+                <div class="bar-label">4月</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">8</div>
+                <div class="bar amber" style="height:67%"></div>
+                <div class="bar-label">5月</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-value">6</div>
+                <div class="bar green" style="height:50%"></div>
+                <div class="bar-label">6月</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposal Category Donut -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">提案分类占比</h3>
+          </div>
+          <div class="chart-body">
+            <div class="donut-chart" style="background: conic-gradient(var(--amber-500) 0% 30%, var(--blue-500) 30% 50%, var(--green-500) 50% 70%, var(--teal-400) 70% 85%, var(--ink-faint) 85% 100%);">
+              <div class="donut-center">
+                <span class="value">24</span>
+                <span class="label">总提案</span>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--amber-500)"></span>
+                生活 30%
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--blue-500)"></span>
+                学习 20%
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--green-500)"></span>
+                环境 20%
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--teal-400)"></span>
+                活动 15%
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--ink-faint)"></span>
+                制度 15%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Participation Rate Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3 class="chart-title">投票参与率趋势</h3>
+        </div>
+        <div class="chart-body">
+          <div class="bar-chart" style="height:160px;">
+            <div class="bar-group">
+              <div class="bar-value">82%</div>
+              <div class="bar teal" style="height:82%"></div>
+              <div class="bar-label">1月</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-value">78%</div>
+              <div class="bar teal" style="height:78%"></div>
+              <div class="bar-label">2月</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-value">88%</div>
+              <div class="bar teal" style="height:88%"></div>
+              <div class="bar-label">3月</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-value">90%</div>
+              <div class="bar amber" style="height:90%"></div>
+              <div class="bar-label">4月</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-value">95%</div>
+              <div class="bar amber" style="height:95%"></div>
+              <div class="bar-label">5月</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-value">92%</div>
+              <div class="bar green" style="height:92%"></div>
+              <div class="bar-label">6月</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl);">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="icon">🏆</span> 活跃参与排行榜</h3>
+          </div>
+          <div class="card-body">
+            <div class="leaderboard">
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank gold">1</div>
+                <div class="leaderboard-avatar">赵</div>
+                <div class="leaderboard-name">赵晓婷</div>
+                <div class="leaderboard-score">286分</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank gold">2</div>
+                <div class="leaderboard-avatar">王</div>
+                <div class="leaderboard-name">王浩然</div>
+                <div class="leaderboard-score">264分</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank bronze">3</div>
+                <div class="leaderboard-avatar">张</div>
+                <div class="leaderboard-name">张明远</div>
+                <div class="leaderboard-score">252分</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank normal">4</div>
+                <div class="leaderboard-avatar">李</div>
+                <div class="leaderboard-name">李雨桐</div>
+                <div class="leaderboard-score">238分</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank normal">5</div>
+                <div class="leaderboard-avatar">陈</div>
+                <div class="leaderboard-name">陈思涵</div>
+                <div class="leaderboard-score">215分</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank normal">6</div>
+                <div class="leaderboard-avatar">刘</div>
+                <div class="leaderboard-name">刘子轩</div>
+                <div class="leaderboard-score">198分</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="icon">📊</span> 提案通过率</h3>
+          </div>
+          <div class="card-body">
+            <div style="text-align:center;margin-bottom:var(--space-xl);">
+              <div class="donut-chart" style="width:140px;height:140px;background: conic-gradient(var(--green-500) 0% 63%, var(--red-500) 63% 79%, var(--amber-500) 79% 100%);">
+                <div class="donut-center" style="inset:25px;">
+                  <span class="value" style="font-size:24px;">63%</span>
+                  <span class="label">通过率</span>
+                </div>
+              </div>
+            </div>
+            <div class="donut-legend" style="flex-direction:column;align-items:flex-start;gap:var(--space-sm);">
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--green-500)"></span>
+                已通过 15 项
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--red-500)"></span>
+                已否决 4 项
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:var(--amber-500)"></span>
+                进行中 5 项
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PROFILE ═══════════════ -->
+  <div class="page" id="page-profile">
+    <div class="page-content">
+      <!-- Profile Header -->
+      <div class="profile-header-card">
+        <div class="profile-avatar-large">张</div>
+        <div class="profile-info">
+          <h2 class="profile-name">张明远</h2>
+          <p class="profile-class">高二(3)班 · 学号 20240301 · 议长 · 班长</p>
+          <div class="profile-stats-row">
+            <div class="profile-stat">
+              <div class="profile-stat-value">252</div>
+              <div class="profile-stat-label">参与积分</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value">6</div>
+              <div class="profile-stat-label">提交提案</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value">98%</div>
+              <div class="profile-stat-label">投票率</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value">45</div>
+              <div class="profile-stat-label">讨论发言</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl);">
+        <!-- Badges -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="icon">🏅</span> 成就徽章</h3>
+          </div>
+          <div class="card-body">
+            <div class="badges-grid">
+              <div class="badge-card earned">
+                <div class="badge-icon">🌟</div>
+                <div class="badge-name">首投先锋</div>
+                <div class="badge-desc">完成第一次投票</div>
+              </div>
+              <div class="badge-card earned">
+                <div class="badge-icon">✍</div>
+                <div class="badge-name">提案达人</div>
+                <div class="badge-desc">提交5个以上提案</div>
+              </div>
+              <div class="badge-card earned">
+                <div class="badge-icon">🗳</div>
+                <div class="badge-name">投票冠军</div>
+                <div class="badge-desc">连续参与10次投票</div>
+              </div>
+              <div class="badge-card earned">
+                <div class="badge-icon">💬</div>
+                <div class="badge-name">讨论之星</div>
+                <div class="badge-desc">发表30条以上评论</div>
+              </div>
+              <div class="badge-card earned">
+                <div class="badge-icon">🏛</div>
+                <div class="badge-name">议会领袖</div>
+                <div class="badge-desc">当选议员</div>
+              </div>
+              <div class="badge-card locked">
+                <div class="badge-icon">🎯</div>
+                <div class="badge-name">满分提案</div>
+                <div class="badge-desc">提案获100%通过</div>
+              </div>
+              <div class="badge-card locked">
+                <div class="badge-icon">📖</div>
+                <div class="badge-name">宪章守护</div>
+                <div class="badge-desc">参与宪章修订</div>
+              </div>
+              <div class="badge-card locked">
+                <div class="badge-icon">🌈</div>
+                <div class="badge-name">全面发展</div>
+                <div class="badge-desc">所有类别均有提案</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity History -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="icon">📜</span> 近期活动</h3>
+          </div>
+          <div class="card-body">
+            <div class="history-item">
+              <div class="history-icon vote">🗳</div>
+              <div class="history-text">对"班级读书角"提案投了赞成票</div>
+              <div class="history-time">今天</div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon discussion">💬</div>
+              <div class="history-text">在"课间操时间调整"讨论中发表评论</div>
+              <div class="history-time">昨天</div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon proposal">📜</div>
+              <div class="history-text">提交提案"班级值日制度优化方案"</div>
+              <div class="history-time">6月8日</div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon badge">🏅</div>
+              <div class="history-text">获得"议会领袖"徽章</div>
+              <div class="history-time">6月6日</div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon vote">🗳</div>
+              <div class="history-text">对"取消干部轮换制"提案投了反对票</div>
+              <div class="history-time">6月5日</div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon discussion">💬</div>
+              <div class="history-text">主持了第三次班级议会会议</div>
+              <div class="history-time">6月3日</div>
+            </div>
+            <div class="history-item">
+              <div class="history-icon proposal">📜</div>
+              <div class="history-text">提交提案"设立学习互助日"</div>
+              <div class="history-time">5月28日</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════
+     MODALS
+     ═══════════════════════════════════════════ -->
+
+<!-- New Proposal Modal -->
+<div class="modal-overlay" id="modal-proposal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">✍ 提交新提案</h3>
+      <button class="modal-close" onclick="closeModal('proposal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">提案标题</label>
+        <input type="text" class="form-input" placeholder="简洁清晰地描述你的提案" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">提案类别</label>
+        <select class="form-input">
+          <option value="">请选择类别</option>
+          <option value="study">📚 学习</option>
+          <option value="life">🏠 生活</option>
+          <option value="rule">📋 制度</option>
+          <option value="activity">🎯 活动</option>
+          <option value="environment">🌿 环境</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">具体内容</label>
+        <textarea class="form-input" placeholder="详细描述你的提案内容、背景和理由"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">实施方案</label>
+        <textarea class="form-input" placeholder="如果提案通过，你打算如何实施？" style="min-height:80px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">预期效果</label>
+        <textarea class="form-input" placeholder="这个提案实施后会带来什么积极变化？" style="min-height:60px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">投票方式</label>
+        <div style="display:flex;gap:var(--space-md);">
+          <label style="display:flex;align-items:center;gap:var(--space-sm);cursor:pointer;font-size:14px;">
+            <input type="radio" name="vote-type" value="anonymous" checked /> 匿名投票
+          </label>
+          <label style="display:flex;align-items:center;gap:var(--space-sm);cursor:pointer;font-size:14px;">
+            <input type="radio" name="vote-type" value="public" /> 记名投票
+          </label>
+        </div>
+      </div>
+      <p class="form-hint">💡 提案提交后将进入3天讨论期，之后由议会安排投票</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('proposal')">取消</button>
+      <button class="btn btn-primary" onclick="submitProposal()">提交提案</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Discussion Modal -->
+<div class="modal-overlay" id="modal-discussion">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">💬 发起新讨论</h3>
+      <button class="modal-close" onclick="closeModal('discussion')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">讨论主题</label>
+        <input type="text" class="form-input" placeholder="你想讨论什么话题？" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">讨论内容</label>
+        <textarea class="form-input" placeholder="详细描述你想讨论的内容，引导大家理性发言"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">关联提案（可选）</label>
+        <select class="form-input">
+          <option value="">无关联提案</option>
+          <option value="P-024">#P-024 班级读书角</option>
+          <option value="P-023">#P-023 课间操时间调整</option>
+          <option value="P-021">#P-021 环保积分制度</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('discussion')">取消</button>
+      <button class="btn btn-primary" onclick="submitDiscussion()">发布讨论</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════ -->
+<script>
+// ─── NAVIGATION ───
+const pageNames = {
+  dashboard: '仪表盘',
+  proposals: '提案广场',
+  voting: '投票中心',
+  council: '班级议会',
+  charter: '班级宪章',
+  discussions: '公共讨论',
+  statistics: '数据统计',
+  profile: '个人中心'
+};
+
+function navigateTo(page) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // Show target page
+  const target = document.getElementById('page-' + page);
+  if (target) {
+    target.classList.add('active');
+    // Re-trigger animation
+    target.style.animation = 'none';
+    target.offsetHeight; // trigger reflow
+    target.style.animation = '';
+  }
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.page === page);
+  });
+  // Update breadcrumb
+  document.getElementById('breadcrumb').textContent = pageNames[page] || page;
+  // Close mobile sidebar
+  closeSidebar();
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── MOBILE SIDEBAR ───
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('active');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+}
+
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+// ─── MODAL ───
+function openModal(type) {
+  document.getElementById('modal-' + type).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(type) {
+  document.getElementById('modal-' + type).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+});
+
+// ─── VOTING ───
+const voteState = {
+  1: { voted: false, choice: null },
+  2: { voted: false, choice: null }
+};
+
+function castVote(voteId, choice) {
+  if (voteState[voteId].voted) {
+    showToast('你已经投过票了，每人只能投一次', 'warning');
+    return;
+  }
+
+  // Animate selection
+  const options = document.getElementById('vote-options-' + voteId);
+  options.querySelectorAll('.vote-option').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+
+  const selectedOption = options.querySelector('.vote-option.' + choice);
+  selectedOption.classList.add('selected');
+
+  // Add ripple effect
+  const ripple = document.createElement('div');
+  ripple.className = 'vote-ripple';
+  ripple.style.color = choice === 'for' ? 'var(--green-500)' : choice === 'against' ? 'var(--red-500)' : 'var(--ink-faint)';
+  selectedOption.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+
+  // Update vote state
+  voteState[voteId].voted = true;
+  voteState[voteId].choice = choice;
+
+  // Update counts with animation
+  const countEl = document.getElementById(`vote-${voteId}-${choice}-count`);
+  const currentCount = parseInt(countEl.textContent);
+  animateCounter(countEl, currentCount, currentCount + 1, 300);
+
+  const labels = { for: '赞成', against: '反对', abstain: '弃权' };
+  showToast(`投票成功！你选择了"${labels[choice]}"`, 'success');
+}
+
+function animateCounter(el, from, to, duration) {
+  const start = performance.now();
+  function update(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease out cubic
+    el.textContent = Math.round(from + (to - from) * eased);
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// ─── TIMER ───
+function updateTimers() {
+  const now = new Date();
+  
+  // Timer 1: ends tomorrow at midnight
+  const end1 = new Date(now);
+  end1.setDate(end1.getDate() + 1);
+  end1.setHours(0, 0, 0, 0);
+  const diff1 = end1 - now;
+  document.getElementById('timer-1').textContent = formatTime(diff1);
+  
+  // Timer 2: ends in 2 days
+  const end2 = new Date(now);
+  end2.setDate(end2.getDate() + 2);
+  end2.setHours(0, 0, 0, 0);
+  const diff2 = end2 - now;
+  document.getElementById('timer-2').textContent = formatTime(diff2);
+}
+
+function formatTime(ms) {
+  const hours = Math.floor(ms / (1000 * 60 * 60));
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+setInterval(updateTimers, 1000);
+updateTimers();
+
+// ─── TOAST ───
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  const icons = { success: '✅', warning: '⚠️', error: '❌', info: 'ℹ️' };
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type] || icons.info}</span>
+    <span class="toast-text">${message}</span>
+    <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+  `;
+  
+  container.appendChild(toast);
+  
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+  });
+  
+  // Auto remove
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
+}
+
+// ─── FORM SUBMISSIONS ───
+function submitProposal() {
+  const modal = document.getElementById('modal-proposal');
+  const title = modal.querySelector('input').value;
+  
+  if (!title.trim()) {
+    showToast('请填写提案标题', 'warning');
+    return;
+  }
+  
+  closeModal('proposal');
+  showToast('提案提交成功！将进入3天讨论期', 'success');
+  
+  // Reset form
+  modal.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.type === 'radio') return;
+    el.value = '';
+  });
+}
+
+function submitDiscussion() {
+  const modal = document.getElementById('modal-discussion');
+  const title = modal.querySelector('input').value;
+  
+  if (!title.trim()) {
+    showToast('请填写讨论主题', 'warning');
+    return;
+  }
+  
+  closeModal('discussion');
+  showToast('讨论发布成功！', 'success');
+  
+  // Reset form
+  modal.querySelectorAll('input, textarea, select').forEach(el => {
+    el.value = '';
+  });
+}
+
+// ─── FILTER TABS & CHIPS ───
+document.querySelectorAll('.filter-tabs').forEach(group => {
+  group.addEventListener('click', (e) => {
+    if (e.target.classList.contains('filter-tab')) {
+      group.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+    }
+  });
+});
+
+document.querySelectorAll('.filter-chips').forEach(group => {
+  group.addEventListener('click', (e) => {
+    if (e.target.classList.contains('chip')) {
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      e.target.classList.add('active');
+    }
+  });
+});
+
+// ─── COMMENT SUBMISSION ───
+document.querySelectorAll('.comment-input-area .btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const textarea = btn.parentElement.querySelector('textarea');
+    if (textarea.value.trim()) {
+      showToast('评论发布成功！', 'success');
+      textarea.value = '';
+    } else {
+      showToast('请输入评论内容', 'warning');
+    }
+  });
+});
+
+// ─── KEYBOARD SHORTCUTS ───
+document.addEventListener('keydown', (e) => {
+  // ESC to close modals
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => {
+      m.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
+});
+
+// ─── INITIAL ANIMATION ───
+document.addEventListener('DOMContentLoaded', () => {
+  // Stagger stat cards animation
+  document.querySelectorAll('.stat-card').forEach((card, i) => {
+    card.style.animation = `fadeInUp 0.5s var(--ease-out) ${i * 0.1}s both`;
+  });
+});
+</script>
+</body>
+</html>
