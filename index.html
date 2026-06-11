@@ -845,6 +845,7 @@ function renderProposals() {
   grid.innerHTML = DATA.proposals.slice().reverse().map(p => {
     const statusMap = { discussing: ['💬 讨论中', 'status-discussing'], voting: ['🗳 投票中', 'status-voting'], passed: ['✅ 已通过', 'status-passed'], rejected: ['❌ 已否决', 'status-rejected'] };
     const [statusText, statusClass] = statusMap[p.status] || ['📝 草稿', 'status-draft'];
+    const actionBtn = p.status === 'discussing' ? '<div style="margin-top:var(--space-md);padding-top:var(--space-md);border-top:1px solid rgba(26,22,20,.04)"><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();startVoting(' + p.id + ')">🗳 结束讨论，开始投票</button></div>' : '';
     const total = p.votes.for + p.votes.against + p.votes.abstain;
     const forPct = total ? Math.round(p.votes.for / total * 100) : 0;
     const againstPct = total ? Math.round(p.votes.against / total * 100) : 0;
@@ -853,7 +854,7 @@ function renderProposals() {
     if (total > 0) {
       voteBar = '<div class="vote-progress"><div class="vote-bar"><div class="vote-bar-for" style="width:' + forPct + '%"></div><div class="vote-bar-against" style="width:' + againstPct + '%"></div><div class="vote-bar-abstain" style="width:' + abstainPct + '%"></div></div><div class="vote-labels"><span style="color:var(--green-500)">赞成 ' + forPct + '%</span><span style="color:var(--red-500)">反对 ' + againstPct + '%</span><span>弃权 ' + abstainPct + '%</span></div></div>';
     }
-    return '<div class="proposal-card" onclick="navigateTo(\'proposals\')"><div class="proposal-card-header"><span class="proposal-number">#P-' + String(p.id).padStart(3, '0') + '</span><span class="proposal-card-status ' + statusClass + '">' + statusText + '</span></div><h3 class="proposal-card-title">' + p.title + '</h3><p class="proposal-card-desc">' + (p.content || '') + '</p>' + voteBar + '<div class="proposal-card-footer"><span>👤 ' + p.author + '</span><span>💬 ' + p.comments.length + '</span></div></div>';
+    return '<div class="proposal-card" onclick="navigateTo(\'proposals\')"><div class="proposal-card-header"><span class="proposal-number">#P-' + String(p.id).padStart(3, '0') + '</span><span class="proposal-card-status ' + statusClass + '">' + statusText + '</span></div><h3 class="proposal-card-title">' + p.title + '</h3><p class="proposal-card-desc">' + (p.content || '') + '</p>' + voteBar + '<div class="proposal-card-footer"><span>👤 ' + p.author + '</span><span>💬 ' + p.comments.length + '</span></div>' + actionBtn + '</div>';
   }).join('');
 }
 
@@ -970,15 +971,95 @@ function submitComment() {
 }
 
 function renderDiscussions() {
-  const content = document.getElementById('discussionsContent');
-  const empty = document.getElementById('discussionsEmpty');
-  if (DATA.discussions.length === 0) { content.innerHTML = ''; empty.style.display = ''; return; }
+  var content = document.getElementById('discussionsContent');
+  var empty = document.getElementById('discussionsEmpty');
+
+  // Build unified list: proposals in "discussing" status + standalone discussions
+  var items = [];
+
+  // Proposals in discussion phase
+  DATA.proposals.forEach(function(p) {
+    if (p.status === 'discussing') {
+      items.push({
+        type: 'proposal',
+        id: p.id,
+        title: '📜 #' + String(p.id).padStart(3, '0') + ' ' + p.title,
+        author: p.author,
+        content: p.content,
+        comments: p.comments,
+        voteType: p.voteType
+      });
+    }
+  });
+
+  // Standalone discussions
+  DATA.discussions.forEach(function(d, i) {
+    items.push({
+      type: 'discussion',
+      idx: i,
+      title: d.title,
+      author: d.author,
+      content: d.content,
+      comments: d.comments
+    });
+  });
+
+  if (items.length === 0) { content.innerHTML = ''; empty.style.display = ''; return; }
   empty.style.display = 'none';
-  content.innerHTML = DATA.discussions.map((d, i) => {
-    const comments = d.comments.map(c => '<div class="comment"><div class="comment-avatar">' + c.author.charAt(0) + '</div><div class="comment-content"><div class="comment-author">' + c.author + '</div><div class="comment-text">' + c.text + '</div></div></div>').join('');
-    return '<div class="discussion-thread"><div class="discussion-header"><h3 class="discussion-title">' + d.title + '</h3><div class="discussion-meta">' + d.author + ' · ' + d.comments.length + ' 条评论</div></div>' + (d.content ? '<div style="padding:var(--space-md) var(--space-xl);font-size:13px;color:var(--ink-muted)">' + d.content + '</div>' : '') + '<div class="discussion-comments">' + comments + '</div><div class="comment-input-area"><button class="btn btn-primary btn-sm" onclick="openCommentModal(' + i + ')">💬 发表评论</button></div></div>';
+
+  content.innerHTML = items.map(function(item, itemIdx) {
+    var commentsHtml = item.comments.map(function(c) {
+      return '<div class="comment"><div class="comment-avatar">' + c.author.charAt(0) + '</div><div class="comment-content"><div class="comment-author">' + c.author + '</div><div class="comment-text">' + c.text + '</div></div></div>';
+    }).join('');
+
+    var tag = item.type === 'proposal' ? '<span style="font-size:11px;background:var(--blue-100);color:var(--blue-500);padding:2px 8px;border-radius:3px;margin-left:var(--space-sm)">提案讨论</span>' : '';
+
+    var footer = '';
+    if (item.type === 'proposal') {
+      footer = '<div class="comment-input-area" style="justify-content:space-between"><button class="btn btn-primary btn-sm" onclick="openProposalCommentModal(' + item.id + ')">💬 发表评论</button><button class="btn btn-amber btn-sm" onclick="startVoting(' + item.id + ')">🗳 结束讨论，开始投票</button></div>';
+    } else {
+      footer = '<div class="comment-input-area"><button class="btn btn-primary btn-sm" onclick="openCommentModal(' + item.idx + ')">💬 发表评论</button></div>';
+    }
+
+    return '<div class="discussion-thread"><div class="discussion-header"><h3 class="discussion-title">' + item.title + tag + '</h3><div class="discussion-meta">' + item.author + ' · ' + item.comments.length + ' 条评论</div></div>' + (item.content ? '<div style="padding:var(--space-md) var(--space-xl);font-size:13px;color:var(--ink-muted)">' + item.content + '</div>' : '') + '<div class="discussion-comments">' + commentsHtml + '</div>' + footer + '</div>';
   }).join('');
 }
+
+var currentProposalId = -1;
+function openProposalCommentModal(proposalId) {
+  currentProposalId = proposalId;
+  var sel = document.getElementById('commentAuthor');
+  var val = sel.value;
+  var people = [];
+  if (DATA.config.teacherName) {
+    people.push('<option value="' + DATA.config.teacherName + '">' + DATA.config.teacherName + '（' + (DATA.config.teacherRole || '教师') + '）</option>');
+  }
+  people = people.concat(DATA.students.map(function(s) { return '<option value="' + s + '">' + s + '</option>'; }));
+  sel.innerHTML = '<option value="">选择评论人</option>' + people.join('');
+  sel.value = val;
+  document.getElementById('modal-comment').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// Override submitComment to handle both proposals and discussions
+var _originalSubmitComment = submitComment;
+submitComment = function() {
+  var author = document.getElementById('commentAuthor').value;
+  var text = document.getElementById('commentText').value.trim();
+  if (!author || !text) { showToast('请填写完整', 'warning'); return; }
+  if (currentProposalId >= 0) {
+    var p = DATA.proposals.find(function(x) { return x.id === currentProposalId; });
+    if (p) { p.comments.push({ author: author, text: text, createdAt: new Date().toISOString() }); }
+    currentProposalId = -1;
+  } else {
+    DATA.discussions[currentDiscussionIdx].comments.push({ author: author, text: text, createdAt: new Date().toISOString() });
+  }
+  saveData();
+  closeModal('comment');
+  document.getElementById('commentText').value = '';
+  refreshAll();
+  showToast('评论已发送', 'success');
+};
 
 // ── STUDENT PAGE ──
 function renderStudentPage() {
