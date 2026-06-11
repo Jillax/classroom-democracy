@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root {
   --teal-900:#0a2626;--teal-800:#0f3535;--teal-700:#143f3f;--teal-600:#1a5454;--teal-500:#1f6b6b;
@@ -607,7 +608,18 @@ select.form-input{cursor:pointer;appearance:none;background-image:url("data:imag
   <div class="modal">
     <div class="modal-header"><h3 class="modal-title">📋 批量导入学生</h3><button class="modal-close" onclick="closeModal('importStudents')">✕</button></div>
     <div class="modal-body">
-      <div class="form-group"><label class="form-label">学生姓名（每行一个）</label><textarea class="form-input" id="importStudentsText" placeholder="张三&#10;李四&#10;王五" style="min-height:200px"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">📁 从文件导入</label>
+        <div style="border:2px dashed rgba(26,22,20,.12);border-radius:var(--radius-md);padding:var(--space-xl);text-align:center;cursor:pointer;transition:all .2s;background:var(--cream-warm)" id="fileDropZone" ondragover="event.preventDefault();this.style.borderColor='var(--teal-400)';this.style.background='var(--teal-50)'" ondragleave="this.style.borderColor='rgba(26,22,20,.12)';this.style.background='var(--cream-warm)'" ondrop="handleFileDrop(event)" onclick="document.getElementById('studentFileInput').click()">
+          <div style="font-size:32px;margin-bottom:var(--space-sm);opacity:.5">📂</div>
+          <p style="font-size:13px;color:var(--ink-muted);margin-bottom:var(--space-sm)">点击选择文件或拖拽文件到此处</p>
+          <p style="font-size:11px;color:var(--ink-faint)">支持格式：TXT / CSV / XLSX / XLS / JSON</p>
+        </div>
+        <input type="file" id="studentFileInput" accept=".txt,.csv,.xlsx,.xls,.json" style="display:none" onchange="handleStudentFile(event)" />
+        <div id="filePreview" style="display:none;margin-top:var(--space-md);padding:var(--space-md);background:var(--green-100);border-radius:var(--radius-sm);font-size:13px"></div>
+      </div>
+      <div style="text-align:center;color:var(--ink-faint);font-size:12px;margin-bottom:var(--space-lg)">── 或手动输入 ──</div>
+      <div class="form-group"><label class="form-label">学生姓名（每行一个）</label><textarea class="form-input" id="importStudentsText" placeholder="张三&#10;李四&#10;王五" style="min-height:120px"></textarea></div>
     </div>
     <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('importStudents')">取消</button><button class="btn btn-primary" onclick="importStudentsFromModal()">导入</button></div>
   </div>
@@ -982,13 +994,121 @@ function removeStudent(idx) {
   refreshAll();
 }
 
+let pendingFileNames = [];
+
+function handleFileDrop(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  var zone = document.getElementById('fileDropZone');
+  zone.style.borderColor = 'rgba(26,22,20,.12)';
+  zone.style.background = 'var(--cream-warm)';
+  var files = event.dataTransfer.files;
+  if (files.length > 0) processStudentFile(files[0]);
+}
+
+function handleStudentFile(event) {
+  var file = event.target.files[0];
+  if (file) processStudentFile(file);
+  event.target.value = '';
+}
+
+function processStudentFile(file) {
+  var ext = file.name.split('.').pop().toLowerCase();
+  var preview = document.getElementById('filePreview');
+  preview.style.display = 'none';
+  pendingFileNames = [];
+
+  if (ext === 'txt' || ext === 'csv') {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var text = e.target.result;
+      var delimiter = ext === 'csv' ? ',' : '\n';
+      var lines = text.split(/[\n\r]+/);
+      var names = [];
+      lines.forEach(function(line) {
+        var parts = line.split(delimiter === ',' ? /[,，]/ : /\n/);
+        parts.forEach(function(part) {
+          var n = part.replace(/^[\s"']+|[\s"']+$/g, '').trim();
+          if (n && n.length <= 20) names.push(n);
+        });
+      });
+      pendingFileNames = names;
+      preview.style.display = '';
+      preview.innerHTML = '✅ 已识别 <strong>' + names.length + '</strong> 个姓名（' + file.name + '）：' + names.slice(0, 8).join('、') + (names.length > 8 ? '...' : '');
+      document.getElementById('importStudentsText').value = names.join('\n');
+    };
+    reader.readAsText(file, 'UTF-8');
+  } else if (ext === 'xlsx' || ext === 'xls') {
+    if (typeof XLSX === 'undefined') {
+      showToast('XLSX 库加载中，请稍后重试', 'warning');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, { type: 'array' });
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        var names = [];
+        json.forEach(function(row) {
+          if (Array.isArray(row)) {
+            row.forEach(function(cell) {
+              if (cell != null) {
+                var n = String(cell).trim();
+                if (n && n.length <= 20 && !/^[0-9.]+$/.test(n)) names.push(n);
+              }
+            });
+          }
+        });
+        pendingFileNames = names;
+        preview.style.display = '';
+        preview.innerHTML = '✅ 已从 <strong>' + file.name + '</strong> 识别 <strong>' + names.length + '</strong> 个姓名：' + names.slice(0, 8).join('、') + (names.length > 8 ? '...' : '');
+        document.getElementById('importStudentsText').value = names.join('\n');
+      } catch(err) {
+        showToast('解析 Excel 文件失败：' + err.message, 'error');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else if (ext === 'json') {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var json = JSON.parse(e.target.result);
+        var names = [];
+        if (Array.isArray(json)) {
+          json.forEach(function(item) {
+            if (typeof item === 'string') {
+              if (item.trim()) names.push(item.trim());
+            } else if (item && typeof item === 'object') {
+              var n = item.name || item.studentName || item.姓名 || item['学生姓名'] || '';
+              if (n.trim()) names.push(n.trim());
+            }
+          });
+        }
+        pendingFileNames = names;
+        preview.style.display = '';
+        preview.innerHTML = '✅ 已从 <strong>' + file.name + '</strong> 识别 <strong>' + names.length + '</strong> 个姓名：' + names.slice(0, 8).join('、') + (names.length > 8 ? '...' : '');
+        document.getElementById('importStudentsText').value = names.join('\n');
+      } catch(err) {
+        showToast('解析 JSON 文件失败：' + err.message, 'error');
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  } else {
+    showToast('不支持的文件格式：.' + ext + '，请使用 TXT/CSV/XLSX/XLS/JSON', 'warning');
+  }
+}
+
 function importStudentsFromModal() {
-  const text = document.getElementById('importStudentsText').value;
-  const names = text.split('\n').map(n => n.trim()).filter(n => n && !DATA.students.includes(n));
-  DATA.students.push(...names);
+  var text = document.getElementById('importStudentsText').value;
+  var names = text.split('\n').map(function(n) { return n.trim(); }).filter(function(n) { return n && !DATA.students.includes(n); });
+  DATA.students.push.apply(DATA.students, names);
   saveData();
   closeModal('importStudents');
   document.getElementById('importStudentsText').value = '';
+  document.getElementById('filePreview').style.display = 'none';
+  pendingFileNames = [];
   renderStudentPage();
   refreshAll();
   showToast('已导入 ' + names.length + ' 名学生', 'success');
